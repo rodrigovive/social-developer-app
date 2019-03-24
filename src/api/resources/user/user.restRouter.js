@@ -2,10 +2,15 @@ const express = require('express');
 const router = express.Router();
 const controller = require('./user.controller');
 
-// @route GET api/user/test
+// @route GET api/users/test
 // @desc Test users route
 // @access Public
 
 router.get('/test',controller.index);
+
+// @route GET api/users/register
+// @desc Register user
+// @access Public
+router.post('/register',controller.register);
 
 module.exports = router;

@@ -5,6 +5,7 @@ const gravatar = require("gravatar");
 const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken')
 const {secretOrKey} = require('../../../config/keys');
+const passport = require('passport');
 exports.index = (req, res) => {
   res.json({
     msg: "User Works"
@@ -63,12 +64,12 @@ exports.login = (req, res) => {
         jwt.sign(
           payload, 
           secretOrKey, 
-          { expireIn: 3600 }, 
+          { expiresIn: 3600 }, 
           (err, token) => {
             if(err) throw Error('JWT Error');
             res.json({
               success: true,
-              token: `Bearer${token}`
+              token: `Bearer ${token}`
             })
           });
       
@@ -82,3 +83,14 @@ exports.login = (req, res) => {
     });
   });
 };
+
+exports.passportAuthenticate = passport.authenticate('jwt', { session: false });
+
+exports.current = (req,res) => {
+  const {id, email, name} = req.user;
+  res.json({
+    id,
+    name,
+    email
+  })
+} 

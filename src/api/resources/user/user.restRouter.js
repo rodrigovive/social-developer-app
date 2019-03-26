@@ -17,4 +17,9 @@ router.post('/register',controller.register);
 // @access Public
 router.post('/login',controller.login);
 
+// @route GET api/users/current
+// @desc Return current user
+// @access Private
+router.post('/current', controller.passportAuthenticate, controller.current);
+
 module.exports = router;

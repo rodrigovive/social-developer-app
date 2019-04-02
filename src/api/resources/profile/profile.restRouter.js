@@ -14,8 +14,21 @@ router.get("/test", profileController.test);
 
 router.get("/", profileController.passportAuthenticate , profileController.get);
 
+// @ route  GET  api/profile/handle/:handle
+// @desc    GET profile by handle
+// @access  Public
+
+router.get('/handle/:handle', profileController.getUserByHandle);
+
+// @ route  GET  api/profile/user/:user_id
+// @desc    GET profile by user ID
+// @access  Public
+
+router.get('/user/:user_id', profileController.getUserById);
+
+
 // @ route  POST  api/profile
-// @desc    Create user profile
+// @desc    Create or edit user profile
 // @access  Private
 
 router.post("/", profileController.passportAuthenticate , profileController.create);

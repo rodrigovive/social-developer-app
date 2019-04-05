@@ -11,7 +11,7 @@ const Profile = require("../profile/profile.model");
 
 exports.test = (req, res) => res.status(200).json({ msg: "Posts Works" });
 
-exports.get = (req, res) => {
+exports.getPost = (req, res) => {
   Post.find()
     .sort({ date: -1 })
     .then(posts => res.json(posts))
@@ -29,7 +29,7 @@ exports.getPostById = (req, res) => {
     );
 };
 
-exports.create = (req, res) => {
+exports.createPost = (req, res) => {
   const { errors, isValid } = validatePost(req.body);
   const {
     body: { name, text, avatar },
@@ -74,4 +74,124 @@ exports.deletePostById = (req, res) => {
       })
       .catch(err => res.status(400).json({ postnotfound: "No post found" }));
   });
+};
+
+exports.likeByPostId = (req, res) => {
+  const {
+    user: { id: idUser },
+    params: { id: idPost }
+  } = req;
+
+  Profile.findOne({ user: idUser })
+    .then(profile => {
+      Post.findById(idPost)
+        .then(post => {
+          if (post.likes.some(like => like.user.toString() === idUser)) {
+            return res.status(400).json({
+              alreadyliked: "User already liked this post"
+            });
+          }
+          // Add user id to likes array
+          post.likes.unshift({ user: idUser });
+
+          post.save().then(post => res.status(200).json(post));
+        })
+        .catch(err =>
+          res.status(404).json({
+            postnotfound: "No post found"
+          })
+        );
+    })
+    .catch(err => res.status(404).json(err));
+};
+
+exports.unlikeByPostId = (req, res) => {
+  const {
+    user: { id: idUser },
+    params: { id: idPost }
+  } = req;
+
+  Profile.findOne({ user: idUser })
+    .then(profile => {
+      Post.findById(idPost)
+        .then(post => {
+          if (!post.likes.some(like => like.user.toString() === idUser)) {
+            return res.status(400).json({
+              nolikedyet: "You have not yet liked this post"
+            });
+          }
+          // Get remove index
+          const removeIndex = post.likes
+            .map(item => {
+              item => item.user.toString();
+            })
+            .indexOf(idUser);
+
+          // Splice out of array
+          post.likes.splice(removeIndex, 1);
+
+          post.save().then(post => res.status(200).json(post));
+        })
+        .catch(err =>
+          res.status(404).json({
+            postnotfound: "No post found"
+          })
+        );
+    })
+    .catch(err => res.status(404).json(err));
+};
+
+exports.commentByPostId = (req, res) => {
+  const {isValid, errors} = validatePost(req.body);
+
+  if(!isValid){
+    return res.status(400).json(errors);
+  }
+  const {
+    user: { id: idUser },
+    params: { id: idPost },
+    body: { text, name, avatar }
+  } = req;
+
+  Post.findById(idPost)
+    .then(post => {
+      const newComment = {
+        text,
+        name,
+        avatar
+      };
+
+      // add to comments array
+
+      post.comments.unshift(newComment);
+      post.save().then(post => res.json(post));
+    })
+    .catch(err => res.status(404).json({ postnotfound: "No post found" }));
+};
+
+exports.deleteCommentByPostId = (req, res) => {
+  const {
+    user: { id: idUser },
+    params: { id: idPost, comment_id: idComment }
+  } = req;
+
+  Post.findById(idPost)
+    .then(post => {
+      if (post.comments.some(comment => comment._id.toString() === idComment)) {
+        // Get remove index
+        const removeIndex = post.comments
+          .map(item => item._id.toString())
+          .indexOf(idComment);
+
+        // Splice comment out of array
+
+        post.comments.splice(removeIndex, 1);
+        post.save().then(post => res.json(post));
+      } else {
+        return res.status(404).json({
+          commentnotexists: "Comment does not exist"
+        });
+      }
+    })
+    .catch(err => res.status(404).json({ postnotfound: "No post found" }));
 };

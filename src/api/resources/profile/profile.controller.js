@@ -141,7 +141,7 @@ exports.getAllProfile = (req, res) => {
         errors.noprofile = "There are no profiles";
         return res.status(404).json(errors);
       }
-      res.json(profiles);
+      res.status(200).json(profiles);
     })
     .catch(err => res.status(404).json({ profile: "There are no profiles" }));
 };

@@ -8,9 +8,6 @@ module.exports = data => {
     errors.email = "Email is invalid";
   }
 
-  if (!Validator.isLength(data.password || "", { min: 6, max: 30 })) {
-    errors.password = "Password must be at least 6 characters";
-  }
   if (Validator.isEmpty(data.password || '', { ignore_whitespace: true })) {
     errors.password = "Password field is required";
   }

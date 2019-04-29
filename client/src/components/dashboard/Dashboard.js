@@ -6,15 +6,16 @@ import Spinner from "../common/Spinner";
 import isEmpty from "lodash/isEmpty";
 import { Link } from "react-router-dom";
 import ProfileActions from "./ProfileAction";
-
+import Experience from "./Experience";
+import Education from "./Education";
 class Dashboard extends Component {
   componentDidMount() {
     this.props.getCurrentProfile();
   }
 
-  onDeleteClick = (e) => {
+  onDeleteClick = e => {
     this.props.deleteAccount();
-  }
+  };
 
   render() {
     const { user } = this.props.auth;
@@ -32,6 +33,8 @@ class Dashboard extends Component {
               Welcome <Link to={`/profile/${user.name}`}>{user.name}</Link>
             </p>
             <ProfileActions />
+            <Experience experience={profile.experience} />
+            <Education education={profile.education} />
             {/* TODO: exp and edu */}
             <div style={{ marginBottom: "60px" }}>
               <button className="btn btn-danger" onClick={this.onDeleteClick}>
@@ -39,7 +42,7 @@ class Dashboard extends Component {
               </button>
             </div>
           </div>
-        ); 
+        );
       } else {
         dashboardContent = (
           <div>

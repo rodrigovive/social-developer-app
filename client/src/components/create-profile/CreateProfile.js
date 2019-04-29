@@ -5,7 +5,8 @@ import TextFieldGroup from "../common/TextFieldGroup";
 import InputGroup from "../common/InputGroup";
 import SelectListGroup from "../common/SelectListGroup";
 import TextAreaFieldGroup from "../common/TextAreaFieldGroup";
-
+import { createProfile } from "../../actions/profileAction";
+import { withRouter } from "react-router-dom";
 class CreateProfile extends Component {
   constructor(props) {
     super(props);
@@ -31,9 +32,39 @@ class CreateProfile extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+  onDisplaySocialInput = () => {
+    this.setState(prevState => ({
+      displaySocialInputs: !prevState.displaySocialInputs
+    }));
+  };
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors
+      });
+    }
+  }
+
   onSubmit(e) {
     e.preventDefault();
-    console.log("submit");
+    const profileData = {
+      handle: this.state.handle,
+      company: this.state.company,
+      website: this.state.website,
+      location: this.state.location,
+      status: this.state.status,
+      skills: this.state.skills,
+      githubusername: this.state.githubusername,
+      bio: this.state.bio,
+      twitter: this.state.twitter,
+      facebook: this.state.facebook,
+      linkedin: this.state.linkedin,
+      youtube: this.state.youtube,
+      instagram: this.state.instagram
+    };
+
+    this.props.createProfile(profileData, this.props.history);
   }
 
   onChange(e) {
@@ -41,7 +72,15 @@ class CreateProfile extends Component {
   }
 
   render() {
-    const { errors } = this.state;
+    const {
+      errors,
+      displaySocialInputs,
+      twitter,
+      facebook,
+      linkedin,
+      youtube,
+      instagram
+    } = this.state;
 
     // Select options for status
     const options = [
@@ -58,6 +97,57 @@ class CreateProfile extends Component {
         value: "Junior developer"
       }
     ];
+
+    let socialInputs;
+    if (displaySocialInputs) {
+      socialInputs = (
+        <div>
+          <InputGroup
+            placeholder="Twitter Profile URL"
+            name="twitter"
+            icon="fab fa-twitter"
+            value={twitter}
+            onChange={this.onChange}
+            error={errors.twitter}
+          />
+          <InputGroup
+            placeholder="Facebook Profile URL"
+            name="facebook"
+            icon="fab fa-facebook"
+            value={facebook}
+            onChange={this.onChange}
+            error={errors.facebook}
+          />
+
+          <InputGroup
+            placeholder="Linkedin Profile URL"
+            name="linkedin"
+            icon="fab fa-linkedin"
+            value={linkedin}
+            onChange={this.onChange}
+            error={errors.linkedin}
+          />
+          <InputGroup
+            placeholder="Youtube Profile URL"
+            name="youtube"
+            icon="fab fa-youtube"
+            value={twitter}
+            onChange={this.onChange}
+            error={errors.youtube}
+          />
+
+          <InputGroup
+            placeholder="Instagram Profile URL"
+            name="instagram"
+            icon="fab fa-instagram"
+            value={instagram}
+            onChange={this.onChange}
+            error={errors.instagram}
+          />
+        </div>
+      );
+    }
+
     return (
       <div className="create-profile">
         <div className="container">
@@ -139,17 +229,20 @@ class CreateProfile extends Component {
 
                 <div className="mb-3">
                   <button
+                    type="button"
                     className="btn btn-light"
-                    onClick={() => {
-                      this.setState(prevState => ({
-                        displaySocialInputs: !prevState.displaySocialInputs
-                      }));
-                    }}
+                    onClick={this.onDisplaySocialInput}
                   >
                     Add Social Network Links
                   </button>
                   <span className="text-muted">Optional</span>
                 </div>
+                {socialInputs}
+                <input
+                  type="submit"
+                  value="Submit"
+                  className="btn btn-info btn-block mt-4"
+                />
               </form>
             </div>
           </div>
@@ -169,4 +262,7 @@ const mapStateToProps = state => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps)(CreateProfile);
+export default connect(
+  mapStateToProps,
+  { createProfile }
+)(withRouter(CreateProfile));

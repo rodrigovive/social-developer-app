@@ -194,7 +194,7 @@ class CreateProfile extends Component {
             placeholder="Youtube Profile URL"
             name="youtube"
             icon="fab fa-youtube"
-            value={twitter}
+            value={youtube}
             onChange={this.onChange}
             error={errors.youtube}
           />

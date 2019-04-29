@@ -16,7 +16,8 @@ class Education extends Component {
         <td>{edu.degree}</td>
         <td>
           <Moment format="YYYY/MM/DD">{edu.from}</Moment>
-          {edu.to && "-" && (<Moment format="YYYY/MM/DD">{edu.to}</Moment>)}
+          {edu.to && " - "}
+          {edu.to && <Moment format="YYYY/MM/DD">{edu.to}</Moment>}
         </td>
         <td>
           <button

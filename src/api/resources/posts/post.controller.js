@@ -158,7 +158,8 @@ exports.commentByPostId = (req, res) => {
       const newComment = {
         text,
         name,
-        avatar
+        avatar,
+        user: idUser
       };
 
       // add to comments array

@@ -52,7 +52,8 @@ out/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
-
+/src/config/keys.js
+/src/config/keys_dev.js
 # JIRA plugin
 atlassian-ide-plugin.xml
 
